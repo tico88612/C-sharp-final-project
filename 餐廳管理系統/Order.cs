@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Windows.Forms;
 
@@ -88,8 +90,140 @@ namespace 餐廳管理系統
             }
         }
 
+        private SqlConnection connection()
+        {
+            string strconn = @"Data Source=4aee\sqlexpress;Initial Catalog=餐廳;Integrated Security=True";
+            SqlConnection conn = new SqlConnection(strconn);
+            return conn;
+        }
+
         private void button3_Click(object sender, EventArgs e)
         {
+            SqlConnection conn = connection();
+            try
+            {
+                SqlCommand cmd;
+                conn.Open();
+                if (checkBox1.Checked)
+                {
+                    cmd = new SqlCommand("SELECT * FROM 食材 WHERE 食材名稱 = '牛排'", conn);
+                    SqlDataReader sqlDataReader1 = cmd.ExecuteReader();
+                    cmd.Dispose();
+                    sqlDataReader1.Read();
+                    int result = sqlDataReader1.GetInt32(2) - int.Parse(textBox1.Text);
+                    sqlDataReader1.Close();
+                    if (result <= 0)
+                    {
+                        MessageBox.Show("牛排不足", "提示訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    else
+                    {
+                        cmd = new SqlCommand("UPDATE 食材 SET 食材數量 = "+ result.ToString() +" WHERE 食材名稱 = '牛排'", conn);
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                    }
+                    
+                }
+                if (checkBox2.Checked)
+                {
+                    cmd = new SqlCommand("SELECT * FROM 食材 WHERE 食材名稱 = '豬排'", conn);
+                    SqlDataReader sqlDataReader1 = cmd.ExecuteReader();
+                    cmd.Dispose();
+                    sqlDataReader1.Read();
+                    int result = sqlDataReader1.GetInt32(2) - int.Parse(textBox2.Text);
+                    sqlDataReader1.Close();
+                    if (result <= 0)
+                    {
+                        MessageBox.Show("豬排不足", "提示訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    else
+                    {
+                        cmd = new SqlCommand("UPDATE 食材 SET 食材數量 = " + result.ToString() + " WHERE 食材名稱 = '豬排'", conn);
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                    }
+                    
+                }
+                if (checkBox3.Checked)
+                {
+                    cmd = new SqlCommand("SELECT * FROM 食材 WHERE 食材名稱 = '雞排'", conn);
+                    SqlDataReader sqlDataReader1 = cmd.ExecuteReader();
+                    cmd.Dispose();
+                    sqlDataReader1.Read();
+                    int result = sqlDataReader1.GetInt32(2) - int.Parse(textBox3.Text);
+                    sqlDataReader1.Close();
+                    if (result <= 0)
+                    {
+                        MessageBox.Show("雞排不足", "提示訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    else
+                    {
+                        cmd = new SqlCommand("UPDATE 食材 SET 食材數量 = " + result.ToString() + " WHERE 食材名稱 = '雞排'", conn);
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                    }
+                    sqlDataReader1.Close();
+                }
+                if (checkBox4.Checked)
+                {
+                    cmd = new SqlCommand("SELECT * FROM 食材 WHERE 食材名稱 = '麵'", conn);
+                    SqlDataReader sqlDataReader1 = cmd.ExecuteReader();
+                    cmd.Dispose();
+                    sqlDataReader1.Read();
+                    int result = sqlDataReader1.GetInt32(2) - int.Parse(textBox4.Text);
+                    sqlDataReader1.Close();
+                    if (result <= 0)
+                    {
+                        MessageBox.Show("麵不足", "提示訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    else
+                    {
+                        cmd = new SqlCommand("UPDATE 食材 SET 食材數量 = " + result.ToString() + " WHERE 食材名稱 = '麵'", conn);
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                    }
+                    
+                }
+                if (checkBox5.Checked)
+                {
+                    cmd = new SqlCommand("SELECT * FROM 食材 WHERE 食材名稱 = '玉米'", conn);
+                    SqlDataReader sqlDataReader1 = cmd.ExecuteReader();
+                    cmd.Dispose();
+                    sqlDataReader1.Read();
+                    int result = sqlDataReader1.GetInt32(2) - int.Parse(textBox5.Text);
+                    sqlDataReader1.Close();
+                    if (result <= 0)
+                    {
+                        MessageBox.Show("玉米不足", "提示訊息", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    else
+                    {
+                        cmd = new SqlCommand("UPDATE 食材 SET 食材數量 = " + result.ToString() + " WHERE 食材名稱 = '玉米'", conn);
+                        cmd.ExecuteNonQuery();
+                        cmd.Dispose();
+                    }
+                    
+                }
+                MessageBox.Show("新增成功", "提示訊息", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                cmd = new SqlCommand("INSERT INTO 銷售財務表 (銷售財務表memo, 銷售財務表類別, 銷售財務表營業額, 銷售財務表日期) VALUES(@memo, '收入', @money, GETDATE())", conn);
+                cmd.Parameters.Add("@memo", SqlDbType.NVarChar, 255).Value = bill;
+                cmd.Parameters.Add("@money", SqlDbType.Int).Value = total;
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show(ee.Message.ToString());
+            }
+            finally
+            {
+                conn.Close();
+            }
             //To-Do SQL
             button1.Enabled = true;
             button2.Enabled = false;
